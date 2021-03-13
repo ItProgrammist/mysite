@@ -7,10 +7,12 @@
 </head>
 <body>
 
+    <h1>{{question.text}}</h1>
     {% if question.choice_set.all %}
-    <form>
+    <form method="POST" action="{% url 'polls:vote' question.pk %}">
+        {% csrf_token %}
         {% for c in question.choice_set.all %}
-        <input type="checkbox" id="c{{c.pk}}"> <label for="c{{c.pk}}">{{c.text}}</label>
+        <input type="checkbox" name="choice" id="c{{c.pk}}" value="{{c.pk}}"> <label for="c{{c.pk}}">{{c.text}}</label>
         <br>
         {% endfor %}
 
