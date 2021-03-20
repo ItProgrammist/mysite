@@ -16,33 +16,26 @@ class DetailView(generic.DetailView):
     model = Question
     template_name = "polls/detail.html"
 
+class ResultsView(generic.DetailView):
+    model = Question
+    template_name = "polls/results.html"
+
 def meme(request):
     return HttpResponse('<img src="http://img.1001mem.ru/posts_temp/17-12-02/3922587.jpg">')
 
 
 def vote(request, q_id):
         # Ответы пользователя - хранит pk
-        choices = request.POST.getlist("choice")
-        question = Question.objects.get(pk=q_id)
-        
-        res = ""
-        for c_pk in choices:
-                choice = question.choice_set.get(pk=c_pk)
-                choice.votes += 1
-                choice.save()
-                res += "<h1>%s</h1>" % question.choice_set.get(pk=c_pk).votes
-
-        return HttpResponseRedirect( reverse("polls:results", args = (q_id, )) )
-
-
-class ResultsView(generic.DetailView):
-    model = Question
-    template_name = "polls/results.html"
-
-def results(request, q_id):
+    choices = request.POST.getlist("choice")
     question = Question.objects.get(pk=q_id)
-    context = {
-        "question": question,
-    }
+    for c_pk in choices:
+            choice = question.choice_set.get(pk=c_pk)
+            choice.votes += 1
+            choice.save()
+            
 
-    return render(request, "polls/results.html", context)
+    return HttpResponseRedirect( reverse("polls:results", args = (q_id, )) )
+
+
+
+
